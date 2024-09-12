@@ -1,0 +1,7 @@
+function restore() {
+    :
+}
+
+function checkpoint() {
+    :
+}

@@ -1,0 +1,57 @@
+# Configuration file
+
+# Required configuration for the platform specific properties
+source configs/raptor.conf
+
+# All the configuration options for TETRiS
+source configs/tetris.conf
+
+export BINDIR="${SCRIPTDIR}/bench"
+
+# Important variables that influence the benchmark
+
+# 1) The list of applications (== scenarios) that should be benchmarked
+# This benchmark suite can run 3 application dialects
+#   a) A simple binary without any additional arguments or configuration
+#   b) A binary that expects additional arguments which are not E-Mapper specific
+#      Such scenarios should be prefixed with a '?'.
+#   c) A binary/script that expects as argument the current benchmarking mode
+#      and will run and configure the application by itself. Importantly, this binary/script
+#      will also do the necessary E-Mapper specific configuration.
+#      Such scenarios should be prefixed with a '!'.
+scenarios=("abc|bc" "!foobar|bar|!foo" "?blub|foo")
+
+# 2) The number of repetitions per application and benchmarking mode in order to
+#    produce statistically reliable values. At least 10 should be chosen here.
+runs=10
+
+# 3) The modes at which the applications should be benchmarked.
+# Currently the script supports the following modes:
+#   a) *cfs* -- The application will be executed on without any additional configuration/management
+#      directly on the Linux default scheduler (which might be EEVDF on newer Linux kernels).
+#   b) *td* -- The Thread Director extension of modern Intel CPUs will be used to manage the applications
+#      at runtime.
+#   c) *tetris* -- The E-Mapper resource manager will control the applications at runtime.
+#   d) *tetris-offline* -- The E-Mapper resource manager will control the applications at runtime based on
+#      offline generated application characteristics.
+modes=("cfs" "td" "tetris" "tetris-offline")
+
+
+# Other optional configuration variables
+
+# Try to continue the benchmark where we last left of. (Default = 0)
+#continuation=1
+
+# Output directories for results, logs and other intermediate data. (Default = auto)
+
+# Directory where the final benchmark result should be stored
+#result_dir=auto
+
+# Directory where log output of the clients and the server should be stored for the run
+#log_dir=auto
+
+# Directory where resource allocation traces should be stored
+#trace_dir=auto
+
+# Directory where the OP learning database should be stored
+#learn_dir=auto
