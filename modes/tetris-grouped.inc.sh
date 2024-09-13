@@ -97,7 +97,7 @@ function warmup_tetris-grouped() {
         mkdir -p "$log_dir"
 
         (
-            __warmup_prog $p "$logdir" "$serverlog" "$server_pid"
+            __warmup_prog $p "$log_dir" "$serverlog" "$server_pid"
         ) 1>"$learn_log" 2>&1 &
         prog_pids+=("$!")
     done

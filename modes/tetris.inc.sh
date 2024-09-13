@@ -95,7 +95,7 @@ function warmup_tetris() {
 
         mkdir -p "$log_dir"
 
-        __warmup_prog $p "$logdir" "$serverlog" "$server_pid" 1>"$learn_log" 2>&1
+        __warmup_prog $p "$log_dir" "$serverlog" "$server_pid" 1>"$learn_log" 2>&1
     done
 
     # Check if the learning worked for all applications
