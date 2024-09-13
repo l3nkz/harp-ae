@@ -10,6 +10,11 @@ function check_td() {
         failure=1
     fi
 
+    if [ ! -e /proc/ipc_scores ]; then
+        echo "ITD scores not accessible! Wrong kernel?" >&2
+        failure=1
+    fi
+
     echo $failure
 }
 
@@ -26,7 +31,7 @@ function run_td() {
     local serverlog="$log_base_dir/server.log"
     ${TD_SERVER} 1>"$serverlog" 2>&1 &
     local server_pid=$!
-    
+
     local begin_t=$(get_time)
     local begin_e=$(get_energy)
 
