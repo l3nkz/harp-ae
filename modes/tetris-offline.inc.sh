@@ -28,7 +28,7 @@ function run_tetris-offline() {
     local tracelog="$trace_base_dir/trace.json"
 
     # Start the TETRiS server
-    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" --no-measure $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
+    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" $TETRIS_SERVER_EXTRA_ARGS --no-measure 1>"$serverlog" 2>&1 &
     local server_pid=$!
 
     local begin_t=$(get_time)
