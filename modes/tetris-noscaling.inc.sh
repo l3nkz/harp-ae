@@ -121,7 +121,7 @@ function warmup_tetris-noscaling() {
 
         if [ $last_stage != "Mature" ]; then
             success=0
-            echo "$(save_name $p) did not finish learning!" > &2
+            echo "$(save_name $p) did not finish learning!" >&2
         fi
     done
 

@@ -26,9 +26,9 @@ function __warmup_prog() {
 
     while [ $repeat -eq 1 ]; do
         # Before starting the app check if the server is still running
-        ps -p $server_pid > /dev/null;
+        ps -p $server_pid > /dev/null
         if [ $? -ne 0 ]; then
-            break;
+            break
         fi
 
         # Start the application
@@ -114,7 +114,7 @@ function warmup_tetris() {
 
         if [ $last_stage != "Mature" ]; then
             success=0
-            echo "$(save_name $p) did not finish learning!" > &2
+            echo "$(save_name $p) did not finish learning!" 1>&2
         fi
     done
 
