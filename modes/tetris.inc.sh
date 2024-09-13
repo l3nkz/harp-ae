@@ -16,21 +16,22 @@ function check_tetris() {
 function __warmup_prog() {
     local prog="$1"
     local log_base_dir="$2"
-    local trace_base_dir="$3"
-    local learn_dir="$4"
+    local serverlog="$3"
+    local server_pid=$4
 
     local stage="Initial"
     local run=0
-    while [ $stage !=  "Stable" ]; do
-        local serverlog="$log_base_dir/server-${run}.log"
-        local tracelog="$trace_base_dir/trace-${run}.json"
+    local stable_run=0
+    local repeat=1
 
-        # Start the TETRiS server
-        ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" 1>"$serverlog" 2>&1 &
-        local server_pid=$!
+    while [ $repeat -eq 1 ]; do
+        # Before starting the app check if the server is still running
+        ps -p $server_pid > /dev/null;
+        if [ $? -ne 0 ]; then
+            break;
+        fi
 
         # Start the application
-
         local begin_t=$(get_time)
         local begin_e=$(get_energy)
 
@@ -47,27 +48,30 @@ function __warmup_prog() {
             LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} 1>"$proglog" 2>&1
         fi
 
-        # Check if everything worked out great and we can continue with the next iteration
-        if ps -p $server_pid > /dev/null; then
-            # Exit the server and store the result
-            kill -s SIGUSR1 $server_pid
-            sleep 1
-            kill $server_pid
+        # Extract the stage of the last run
+        stage=$(cat $serverlog | grep "client registered" | grep $name | sed "s/.*(Stage \(.*\))/\1/" | tail -1)
 
-            # Extract the stage
-            stage=$(cat $serverlog | grep "client registered" | sed "s/.*(Stage \(.*\))/\1/")
-            run=$((run + 1))
+        echo "Detected Stage: $stage" >> "$proglog"
+        echo "Run: $run" >> "$proglog"
 
-            echo "Detected Stage: $stage" >> "$proglog"
-            echo "Run: $run" >> "$proglog"
+        echo "$stage"
+
+        # Check if we are done with warm up
+        if [ $stage == "Mature" ]; then
+            if [ $stable_run -eq 2 ]; then
+                repeat=0
+            else
+                # If we are in "Mature" stage still make two additional runs
+                stable_run=$((stable_run + 1))
+                repeat=1
+            fi
+        else
+            # Repeat until stage is "Mature"
+            repeat=1
         fi
+
+        run=$((run + 1))
     done
-
-    echo 1
-
-    # Remove leftover files
-    rm -f /tmp/tetris_*
-
 }
 
 function warmup_tetris() {
@@ -77,19 +81,45 @@ function warmup_tetris() {
 
     IFS='|' read -r -a progs <<< "$1"
 
-    success=0
+    local serverlog="$log_base_dir/server.log"
+    local tracelog="$trace_base_dir/trace.json"
+
+    # Start the TETRiS server
+    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
+    local server_pid=$!
+
+    # Start the learn loops for the individual applications
     for p in ${progs[@]}; do
         log_dir="${log_base_dir}/$(save_name $p)"
-        trace_dir="${trace_base_dir}/$(save_name $p)"
+        learn_log="${log_base_dir}/learning_$(save_name $p).log"
 
         mkdir -p "$log_dir"
-        mkdir -p "$trace_dir"
 
-        success=$(__warmup_prog $p "$log_dir" "$trace_dir" "$learn_dir")
-        if [ $success -ne 1 ]; then
-            break
+        __warmup_prog $p "$logdir" "$serverlog" "$server_pid" 1>"$learn_log" 2>&1
+    done
+
+    # Check if the learning worked for all applications
+    success=1
+    if ps -p $server_pid > /dev/null; then
+        # Exit the server and store the result
+        kill -s SIGUSR1 $server_pid
+        sleep 1
+        kill $server_pid
+    else
+        success=0
+    fi
+
+    for p in ${progs[@]}; do
+        last_stage=$(tail -1 "${log_base_dir}/learning_$(save_name $p).log")
+
+        if [ $last_stage != "Mature" ]; then
+            success=0
+            echo "$(save_name $p) did not finish learning!" > &2
         fi
     done
+
+    # Remove leftover files
+    rm -f /tmp/tetris_*
 
     echo $success
 }
@@ -106,7 +136,7 @@ function run_tetris() {
     local tracelog="$trace_base_dir/trace.json"
 
     # Start the TETRiS server
-    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" 1>"$serverlog" 2>&1 &
+    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
     local server_pid=$!
 
     local begin_t=$(get_time)
@@ -160,5 +190,4 @@ function run_tetris() {
 
     # Remove leftover files
     rm -f /tmp/tetris_*
-
 }
