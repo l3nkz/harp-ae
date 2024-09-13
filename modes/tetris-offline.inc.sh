@@ -28,7 +28,7 @@ function run_tetris-offline() {
     local tracelog="$trace_base_dir/trace.json"
 
     # Start the TETRiS server
-    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" --no-measure 1>"$serverlog" 2>&1 &
+    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" --no-measure $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
     local server_pid=$!
 
     local begin_t=$(get_time)
@@ -52,7 +52,7 @@ function run_tetris-offline() {
             else
                 LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} 1>"$proglog" 2>&1
             fi
-            
+
             echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
         ) &
         prog_pids+=("$!")
