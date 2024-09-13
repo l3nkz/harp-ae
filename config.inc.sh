@@ -34,6 +34,9 @@ runs=10
 #   c) *tetris* -- The E-Mapper resource manager will control the applications at runtime.
 #   d) *tetris-offline* -- The E-Mapper resource manager will control the applications at runtime based on
 #      offline generated application characteristics.
+#   e) *tetris-grouped* -- The same as *tetris* but with a learning phase where applications are executed
+#      in parallel and not separately
+#   f) *tetris-noscaling* -- The same as *tetris* but dynamic application scaling is disabled
 modes=("cfs" "td" "tetris" "tetris-offline")
 
 
