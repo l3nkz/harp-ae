@@ -85,7 +85,7 @@ function warmup_tetris-grouped() {
 
     success=0
     run=0
-    while [ success -ne 1 ]; do
+    while [ $success -ne 1 ]; do
         local server_log="$log_base_dir/server-${run}.log"
         local trace_log="$trace_base_dir/trace-${run}.json"
 
@@ -200,7 +200,8 @@ function run_tetris-grouped() {
 
     # Wait for the programs to finish
     for p in ${prog_pids[@]}; do
-        exit_code=$(wait $p)
+        wait $p
+        exit_code=$?
         if [ $exit_code -ne 0 ]; then
             echo "$p did not finish successfully ($exit_code)" >> "$run_log"
             all_finished=0
