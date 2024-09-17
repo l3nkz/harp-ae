@@ -3,15 +3,15 @@
 export SCRIPTDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # Include our support libraries
-source utils/continuation.inc.sh
-source utils/logging.inc.sh
-source utils/printing.inc.sh
+source "$SCRIPTDIR/utils/continuation.inc.sh"
+source "$SCRIPTDIR/utils/logging.inc.sh"
+source "$SCRIPTDIR/utils/printing.inc.sh"
 
 now=$(date "+%y%m%d_%H%M%S")
 
-printf "E-Mapper Benchmark Suite\n\n"
+printf "E-Mapper Benchmark Suite\n -- Measure Script --\n\n"
 
-if [ ! -e config.inc.sh ]; then
+if [ ! -e "${SCRIPTDIR}/config.inc.sh" ]; then
     printf "Missing config file 'config.inc.sh'!\n"
     exit 1;
 fi
@@ -20,7 +20,7 @@ fi
 printf "Sourcing the main configuration file\n"
 
 success=1
-source config.inc.sh
+source "$SCRIPTDIR/config.inc.sh"
 
 if [ -z "${scenarios+x}" ]; then
     printf "Missing configuration option 'scenarios'\n"
@@ -62,12 +62,12 @@ printf "Sourcing mode configurations:\n"
 success=1
 for m in ${modes[@]}; do
     printf " -> $m"
-    if [ ! -e modes/${m}.inc.sh ]; then
+    if [ ! -e "${SCRIPTDIR}/modes/${m}.inc.sh" ]; then
         printf " XX Missing mode config file 'modes/${m}.inc.sh' !!\n"
         success=0
     else
         printf " success\n"
-        source modes/${m}.inc.sh
+        source "${SCRIPTDIR}/modes/${m}.inc.sh"
     fi
 done
 

@@ -1,10 +1,11 @@
 # Configuration file
 
+
 # Required configuration for the platform specific properties
-source configs/raptor.conf
+source "${SCRIPTDIR}/configs/raptor.conf"
 
 # All the configuration options for TETRiS
-source configs/tetris.conf
+source "${SCRIPTDIR}/configs/tetris.conf"
 
 export BINDIR="${SCRIPTDIR}/bench"
 
