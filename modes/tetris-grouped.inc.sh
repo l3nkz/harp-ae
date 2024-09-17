@@ -79,56 +79,69 @@ function warmup_tetris-grouped() {
     local trace_base_dir="$3"
     local learn_dir="$4"
 
+    local warmup_log="${log_base_dir}/warmup.log"
+
     IFS='|' read -r -a progs <<< "$1"
 
-    local serverlog="$log_base_dir/server.log"
-    local tracelog="$trace_base_dir/trace.json"
+    success=0
+    run=0
+    while [ success -ne 1 ]; do
+        local serverlog="$log_base_dir/server-${run}.log"
+        local tracelog="$trace_base_dir/trace-${run}.json"
 
-    # Start the TETRiS server
-    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
-    local server_pid=$!
+        # Start the TETRiS server
+        ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" -s "$learn_dir" $TETRIS_SERVER_EXTRA_ARGS 1>"$serverlog" 2>&1 &
+        local server_pid=$!
 
-    # Start the learn loops for the individual applications in parallel
-    declare -a prog_pids
-    for p in ${progs[@]}; do
-        log_dir="${log_base_dir}/$(save_name $p)"
-        learn_log="${log_base_dir}/learning_$(save_name $p).log"
+        # Start the learn loops for the individual applications in parallel
+        declare -a prog_pids
+        for p in ${progs[@]}; do
+            log_dir="${log_base_dir}/$(save_name $p)-${run}"
+            learn_log="${log_base_dir}/learning_$(save_name $p).log"
 
-        mkdir -p "$log_dir"
+            mkdir -p "$log_dir"
 
-        (
-            __warmup_prog $p "$log_dir" "$serverlog" "$server_pid"
-        ) 1>"$learn_log" 2>&1 &
-        prog_pids+=("$!")
-    done
+            (
+                __warmup_prog $p "$log_dir" "$serverlog" "$server_pid"
+            ) 1>>"$learn_log" 2>&1 &
+            prog_pids+=("$!")
+        done
 
-    # Wait for the programs to learn and finish
-    for p in ${prog_pids[@]}; do
-        wait $p
-    done
+        # Wait for the programs to learn and finish
+        for p in ${prog_pids[@]}; do
+            wait $p
+        done
 
-    # Check if the learning worked for all applications
-    success=1
-    if ps -p $server_pid > /dev/null; then
-        # Exit the server and store the result
-        kill -s SIGUSR1 $server_pid
-        sleep 1
-        kill $server_pid
-    else
-        success=0
-    fi
+        # Check if the learning worked for all applications
+        if ps -p $server_pid > /dev/null; then
+            # Exit the server and store the result
+            kill -s SIGUSR1 $server_pid
+            sleep 1
+            kill $server_pid
 
-    for p in ${progs[@]}; do
-        last_stage=$(tail -1 "${log_base_dir}/learning_$(save_name $p).log")
-
-        if [ $last_stage != "Mature" ]; then
+            success=1
+        else
+            echo "Server did not exit successfully! Restart learning" >> ${warmup_log}
             success=0
-            echo "$(save_name $p) did not finish learning!" >&2
         fi
-    done
 
-    # Remove leftover files
-    rm -f /tmp/tetris_*
+        for p in ${progs[@]}; do
+            last_stage=$(tail -1 "${log_base_dir}/learning_$(save_name $p).log")
+
+            if [ "x$last_stage" != "xMature" ]; then
+                success=0
+                echo "$(save_name $p) did not finish learning!" >> "${warmup_log}"
+            else
+                learn_runs=$(wc -l "${log_base_dir}/learning_$(save_name $p).log")
+                echo "$(save_name $p) fully warmed up after ${learn_rnus} run(s)" >> ${warmup_log}
+            fi
+        done
+
+        # Remove leftover files
+        rm -f /tmp/tetris_*
+
+        run=$((run + 1))
+    done
 
     echo $success
 }
