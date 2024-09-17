@@ -97,6 +97,14 @@ else
     printf "Yes\n"
 fi
 
+printf " - Platform specific checks "
+if ! ${platfrom_routines[check]}; then
+    printf "NO!\n"
+    success=0
+else
+    printf "Yes\n"
+fi
+
 printf " - Access to all tools of the benchmarking modes\n"
 for m in ${modes[@]}; do
     printf "  - $m "
@@ -142,15 +150,7 @@ for s in ${scenarios[@]}; do
 done
 
 if [ $success -ne 1 ]; then
-    printf "Incomplete system configuration!\n"
-    exit 1;
-fi
-
-
-printf "Checking the environment:\n"
-success=1
-if [ $success -ne 1 ]; then
-    printf "Incomplete environment!\n"
+    printf "Incomplete system configuration!\nDid you run the prepare script??\n"
     exit 1;
 fi
 
