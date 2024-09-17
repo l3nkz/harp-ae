@@ -1,16 +1,7 @@
-export TETRIS_SERVER="${SCRIPTDIR}/bin/tetrisserver"
-export TETRIS_LIB="${SCRIPTDIR}/lib/libtetrisclientlegacy.so"
+source "${SCRIPTDIR}/modes/tetris_base.inc.sh"
 
 function check_tetris-offline() {
-    local failure=0
-    if [ ! -x "$TETRIS_SERVER" ]; then
-        failure=1
-    fi
-    if [ ! -e "$TETRIS_LIB" ]; then
-        failure=1
-    fi
-
-    echo $failure
+    __check_tetris
 }
 
 function warmup_tetris-offline() {
