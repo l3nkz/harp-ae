@@ -29,8 +29,14 @@ function run_td() {
     IFS='|' read -r -a progs <<< "$1"
 
     local serverlog="$log_base_dir/server.log"
+
+    local run_log="$log_base_dir/run.log"
+
+    # Start the TD Server
     ${TD_SERVER} 1>"$serverlog" 2>&1 &
     local server_pid=$!
+
+    echo "Started TD Server ($server_pid)" >> "$run_log"
 
     local begin_t=$(get_time)
     local begin_e=$(get_energy)
@@ -54,26 +60,41 @@ function run_td() {
             fi
 
             echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
-        ) &
-        prog_pids+=("$!")
+        ) 1>>"$run_log" 2>&1 &
+        pid=$!
+
+        echo "Started $(human_readable $p) -> $pid" >> "$run_log"
+
+        prog_pids+=("$pid")
     done
+
+    local all_finished=1
 
     # Wait for the programs to finish
     for p in ${prog_pids[@]}; do
-        wait $p
+        exit_code=$(wait $p)
+        if [ $exit_code -ne 0 ]; then
+            echo "$p did not finish successfully ($exit_code)" >> "$run_log"
+            all_finished=0
+        fi
     done
 
     local total_t=$(time_diff $begin_t)
     local total_e=$(energy_diff $begin_e)
 
     if ps -p $server_pid > /dev/null; then
-        # Exit the server and store the result
+        # Exit the server
         kill $server_pid
+    else
+        # Something went wrong and we need to retry …
+        echo "The server did not finish successfully" >> "$run_log"
+        all_finished=0
+    fi
 
+    if [ $all_finished -eq 1 ]; then
         echo "td;$total_t;$total_e" >> $result_file
         echo 1
     else
-        # Something went wrong and we need to retry …
         echo 0
     fi
 

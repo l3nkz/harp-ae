@@ -10,6 +10,8 @@ function run_cfs() {
     local result_file="$2"
     local log_base_dir="$3"
 
+    local run_log="$log_base_dir/run.log"
+
     IFS='|' read -r -a progs <<< "$1"
 
     local begin_t=$(get_time)
@@ -34,18 +36,32 @@ function run_cfs() {
             fi
 
             echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
-        ) &
-        prog_pids+=("$!")
+        ) 1>>"$run_log" 2>&1 &
+        pid=$!
+
+        echo "Started $(human_readable $p) -> $pid" >> "$run_log"
+
+        prog_pids+=("$pid")
     done
+
+    local all_finished=1
 
     # Wait for the programs to finish
     for p in ${prog_pids[@]}; do
-        wait $p
+        exit_code=$(wait $p)
+        if [ $exit_code -ne 0 ]; then
+            echo "$p did not finish successfully ($exit_code)" >> "$run_log"
+            all_finished=0
+        fi
     done
 
     local total_t=$(time_diff $begin_t)
     local total_e=$(energy_diff $begin_e)
 
-    echo "cfs;$total_t;$total_e" >> $result_file
-    echo 1
+    if [ $all_finished -eq 1 ]; then
+        echo "cfs;$total_t;$total_e" >> $result_file
+        echo 1
+    else
+        echo 0
+    fi
 }
