@@ -28,12 +28,12 @@ function run_td() {
 
     IFS='|' read -r -a progs <<< "$1"
 
-    local serverlog="$log_base_dir/server.log"
+    local server_log="$log_base_dir/server.log"
 
     local run_log="$log_base_dir/run.log"
 
     # Start the TD Server
-    ${TD_SERVER} 1>"$serverlog" 2>&1 &
+    ${TD_SERVER} 1>"$server_log" 2>&1 &
     local server_pid=$!
 
     echo "Started TD Server ($server_pid)" >> "$run_log"
@@ -47,19 +47,19 @@ function run_td() {
         (
             local name=$(save_name $p)
 
-            local proglog="$log_base_dir/${name}.log"
+            local prog_log="$log_base_dir/${name}.log"
             local prog_start=$(get_time)
 
             if [[ "$p" == !* ]]; then
-                ${BINDIR}/${name} td 1>"$proglog" 2>&1
+                ${BINDIR}/${name} td 1>"$prog_log" 2>&1
             elif [[ "$p" == \?* ]]; then
                 args=$(cat ${BINDIR}/${name}.args)
-                LD_PRELOAD=${TD_LIB} ${BINDIR}/${name} ${args} 1>"$proglog" 2>&1
+                LD_PRELOAD=${TD_LIB} ${BINDIR}/${name} ${args} 1>"$prog_log" 2>&1
             else
-                LD_PRELOAD=${TD_LIB} ${BINDIR}/${name} 1>"$proglog" 2>&1
+                LD_PRELOAD=${TD_LIB} ${BINDIR}/${name} 1>"$prog_log" 2>&1
             fi
 
-            echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
+            echo "total_ms: $(time_diff $prog_start)" >> "$prog_log"
         ) 1>>"$run_log" 2>&1 &
         pid=$!
 

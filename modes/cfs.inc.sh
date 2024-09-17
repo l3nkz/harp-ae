@@ -23,19 +23,19 @@ function run_cfs() {
         (
             local name=$(save_name $p)
 
-            local proglog="$log_base_dir/${name}.log"
+            local prog_log="$log_base_dir/${name}.log"
             local prog_start=$(get_time)
 
             if [[ "$p" == !* ]]; then
-                ${BINDIR}/${name} cfs 1>"$proglog" 2>&1
+                ${BINDIR}/${name} cfs 1>"$prog_log" 2>&1
             elif [[ "$p" == \?* ]]; then
                 args=$(cat ${BINDIR}/${name}.args)
-                ${BINDIR}/${name} ${args} 1>"$proglog" 2>&1
+                ${BINDIR}/${name} ${args} 1>"$prog_log" 2>&1
             else
-                ${BINDIR}/${name} 1>"$proglog" 2>&1
+                ${BINDIR}/${name} 1>"$prog_log" 2>&1
             fi
 
-            echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
+            echo "total_ms: $(time_diff $prog_start)" >> "$prog_log"
         ) 1>>"$run_log" 2>&1 &
         pid=$!
 

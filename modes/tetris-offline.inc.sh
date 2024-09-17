@@ -24,13 +24,13 @@ function run_tetris-offline() {
 
     IFS='|' read -r -a progs <<< "$1"
 
-    local serverlog="$log_base_dir/server.log"
-    local tracelog="$trace_base_dir/trace.json"
+    local server_log="$log_base_dir/server.log"
+    local trace_log="$trace_base_dir/trace.json"
 
     local run_log="$log_base_dir/run.log"
 
     # Start the TETRiS server
-    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$tracelog" $TETRIS_SERVER_EXTRA_ARGS --no-measure 1>"$serverlog" 2>&1 &
+    ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$trace_log" $TETRIS_SERVER_EXTRA_ARGS --no-measure 1>"$server_log" 2>&1 &
     local server_pid=$!
 
     echo "Started TETRiS Server ($server_pid)" >> "$run_log"
@@ -45,19 +45,19 @@ function run_tetris-offline() {
             local name=$(save_name $p)
             export TETRIS_MAPPING="${TETRIS_MAPPING_BASE}/${name}.yaml"
 
-            local proglog="$log_base_dir/${name}.log"
+            local prog_log="$log_base_dir/${name}.log"
             local prog_start=$(get_time)
 
             if [[ "$p" == !* ]]; then
-                ${BINDIR}/${name} tetris 1>"$proglog" 2>&1
+                ${BINDIR}/${name} tetris 1>"$prog_log" 2>&1
             elif [[ "$p" == \?* ]]; then
                 args=$(cat ${BINDIR}/${name}.args)
-                LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} ${args} 1>"$proglog" 2>&1
+                LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} ${args} 1>"$prog_log" 2>&1
             else
-                LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} 1>"$proglog" 2>&1
+                LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} 1>"$prog_log" 2>&1
             fi
 
-            echo "total_ms: $(time_diff $prog_start)" >> "$proglog"
+            echo "total_ms: $(time_diff $prog_start)" >> "$prog_log"
         ) 1>>"$run_log" 2>&1 &
         pid=$!
 
