@@ -62,8 +62,8 @@ function warmup_tetris-grouped() {
                 success=0
                 echo "$(save_name $p) did not finish learning!" >> "${warmup_log}"
             else
-                learn_runs=$(wc -l "${log_base_dir}/learning_$(save_name $p).log")
-                echo "$(save_name $p) fully warmed up after ${learn_rnus} run(s)" >> ${warmup_log}
+                learn_runs=$(cat "${log_base_dir}/learning_$(save_name $p).log" | wc -l)
+                echo "$(save_name $p) fully warmed up after ${learn_runs} run(s)" >> ${warmup_log}
             fi
         done
 
