@@ -98,7 +98,8 @@ else
 fi
 
 printf " - Platform specific checks "
-if ! ${platfrom_routines[check]}; then
+failure=$(${platform_routines[check]})
+if [ $failure -eq 1 ]; then
     printf "NO!\n"
     success=0
 else

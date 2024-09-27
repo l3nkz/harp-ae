@@ -2,7 +2,7 @@
 
 
 # Required configuration for the platform specific properties
-declare -A platfrom_routines
+declare -A platform_routines
 source "${SCRIPTDIR}/configs/raptor.conf"
 
 # All the configuration options for TETRiS

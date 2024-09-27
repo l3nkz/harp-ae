@@ -30,7 +30,8 @@ else
 fi
 
 printf " - Platform specific setup "
-if ! ${platfrom_routines[setup]}; then
+success=$(${platform_routines[setup]})
+if [ $success -ne 0 ]; then
     printf "Failure!\n"
     exit 1
 else
