@@ -22,6 +22,7 @@ function __warmup_prog_tetris() {
     local log_base_dir="$2"
     local server_log="$3"
     local server_pid=$4
+    local mode=${5:-tetris}
 
     local stage="Initial"
     local run=0
@@ -44,7 +45,7 @@ function __warmup_prog_tetris() {
         local prog_log="$log_base_dir/${name}-${run}.log"
 
         if [[ "$p" == !* ]]; then
-            ${BINDIR}/${name} tetris 1>"$prog_log" 2>&1
+            ${BINDIR}/${name} $mode 1>"$prog_log" 2>&1
         elif [[ "$p" == \?* ]]; then
             args=$(cat ${BINDIR}/${name}.args)
             LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} ${args} 1>"$prog_log" 2>&1

@@ -34,7 +34,7 @@ function warmup_tetris-noscaling() {
 
             mkdir -p "$log_dir"
 
-            __warmup_prog_tetris $p "$log_dir" "$server_log" "$server_pid" 1>"$learn_log" 2>&1
+            __warmup_prog_tetris $p "$log_dir" "$server_log" "$server_pid" noscaling 1>"$learn_log" 2>&1
 
         done
 
@@ -112,7 +112,7 @@ function run_tetris-noscaling() {
             local prog_start=$(get_time)
 
             if [[ "$p" == !* ]]; then
-                ${BINDIR}/${name} tetris 1>"$prog_log" 2>&1
+                ${BINDIR}/${name} noscaling 1>"$prog_log" 2>&1
             elif [[ "$p" == \?* ]]; then
                 args=$(cat ${BINDIR}/${name}.args)
                 LD_PRELOAD=${TETRIS_LIB} ${BINDIR}/${name} ${args} 1>"$prog_log" 2>&1
