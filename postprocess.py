@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pandas import read_csv, DataFrame, concat, Series
-from scipy.stats import gmean
+from scipy.stats import gmean, gstd
 from argparse import ArgumentParser
 import sys
 import os
@@ -51,6 +51,43 @@ def process_file(file_path):
 
     return results
 
+def save_as_csv(scenarios, mode, value_type, csv_path, geomean=True):
+    data = {
+        "scenario" : [],
+        "nr_apps" : [],
+        "energy" : [],
+        "err_energy_max" : [],
+        "err_energy_min" : [],
+        "time" : [],
+        "err_time_max" : [],
+        "err_time_min" : []
+    }
+
+    # Collect the data for all scenarios
+    for s in scenarios:
+        for k in data.keys():
+            data[k].append(s[value_type][mode][k])
+
+    df = DataFrame(data)
+    # Sort them first by number of apps and then by their name
+    df = df.sort_values(["nr_apps", "scenario"])
+
+    # Calculate geomean and add it to the dataframei
+    if geomean:
+        mean = Series({
+            "scenario" : "GeoMean",
+            "nr_apps" : 0,
+            "energy" : gmean(data["energy"]),
+            "err_energy_max" : 0,
+            "err_energy_min" : 0,
+            "time" : gmean(data["time"]),
+            "err_time_max" : 0,
+            "err_time_min" : 0,
+        })
+        df = concat([df, DataFrame([mean], columns=mean.index)])
+
+    df.to_csv(csv_path, index=False, sep=",")
+
 
 def run():
     parser = ArgumentParser()
@@ -69,20 +106,47 @@ def run():
 
     # Create the subdirectories in the output folder
     os.makedirs(os.path.join(args.output, "single"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "single", "raw"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "single", "rel"), exist_ok=True)
     os.makedirs(os.path.join(args.output, "multi"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "multi", "raw"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "multi", "rel"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "all"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "all", "raw"), exist_ok=True)
+    os.makedirs(os.path.join(args.output, "all", "rel"), exist_ok=True)
 
     single_scenarios = []
     multi_scenarios = []
+    all_scenarios = []
     modes = set()
 
     print("Collecting results")
     for filename in os.listdir(args.input):
+        if filename.startswith("__"):
+            continue
+
         if filename.endswith(".csv"):
             res = process_file(os.path.join(args.input, filename))
 
-            data = {}
+            data = {
+                    "raw": {},
+                    "rel": {}
+            }
+
+            for mode, result in res["raw_values"].items():
+                data["raw"][mode] = {
+                                "scenario" : res["name"],
+                                "nr_apps" : res["nr_apps"],
+                                "energy" : result["energy"][0] / 10**6,
+                                "err_energy_max" : result["energy"][1],
+                                "err_energy_min" : result["energy"][1],
+                                "time" : result["time"][0] / 10**3,
+                                "err_time_max" : result["time"][1],
+                                "err_time_min" : result["time"][1],
+                             }
+
             for mode, result in res["rel_values"].items():
-                data[mode] = {
+                data["rel"][mode] = {
                                 "scenario" : res["name"],
                                 "nr_apps" : res["nr_apps"],
                                 "energy" : result["energy"][0],
@@ -100,71 +164,18 @@ def run():
             else:
                 multi_scenarios.append(data)
 
+            all_scenarios.append(data)
+
     print("Generating post-processed files")
     for mode in modes:
         print (f" - {mode}")
-        data = { 
-                    "scenario" : [],
-                    "nr_apps" : [],
-                    "energy" : [],
-                    "err_energy_max" : [],
-                    "err_energy_min" : [],
-                    "time" : [],
-                    "err_time_max" : [],
-                    "err_time_min" : []
-               }
+        save_as_csv(single_scenarios, mode, "raw", os.path.join(args.output, "single", "raw", mode + ".csv"), False)
+        save_as_csv(multi_scenarios, mode, "raw", os.path.join(args.output, "multi", "raw", mode + ".csv"), False)
+        save_as_csv(all_scenarios, mode, "raw", os.path.join(args.output, "all", "raw", mode + ".csv"), False)
 
-        # Collect the data for all single-app scenarios and generate a csv out of it
-        for s in single_scenarios:
-            for k in data.keys():
-                data[k].append(s[mode][k])
-
-        df = DataFrame(data)
-        # Sort them first by number of apps and then by their name
-        df = df.sort_values(["scenario"])
-
-        # Calculate geomean and add it to the dataframe
-        mean = Series({
-            "scenario" : "GeoMean",
-            "nr_apps" : 0,
-            "energy" : gmean(data["energy"]),
-            "err_energy_max" : 0,
-            "err_energy_min" : 0,
-            "time" : gmean(data["time"]),
-            "err_time_max" : 0,
-            "err_time_min" : 0,
-        })
-        df = concat([df, DataFrame([mean], columns=mean.index)])
-
-        df.to_csv(os.path.join(args.output, "single", f"{mode}.csv"), index=False, sep=",")
-
-        # Do the same again for all multi-app scenarios
-        # But first clear the data construct
-        for k in data.keys():
-            data[k].clear()
-
-        for s in multi_scenarios:
-            for k in data.keys():
-                data[k].append(s[mode][k])
-
-        df = DataFrame(data)
-        # Sort them first by number of apps and then by their name
-        df = df.sort_values(["nr_apps", "scenario"])
-
-        # Calculate geomean and add it to the dataframe
-        mean = Series({
-            "scenario" : "GeoMean",
-            "nr_apps" : 0,
-            "energy" : gmean(data["energy"]),
-            "err_energy_max" : 0,
-            "err_energy_min" : 0,
-            "time" : gmean(data["time"]),
-            "err_time_max" : 0,
-            "err_time_min" : 0,
-        })
-        df = concat([df, DataFrame([mean], columns=mean.index)])
-
-        df.to_csv(os.path.join(args.output, "multi", f"{mode}.csv"), index=False, sep=",")
+        save_as_csv(single_scenarios, mode, "rel", os.path.join(args.output, "single", "rel", mode + ".csv"))
+        save_as_csv(multi_scenarios, mode, "rel", os.path.join(args.output, "multi", "rel", mode + ".csv"))
+        save_as_csv(all_scenarios, mode, "rel", os.path.join(args.output, "all", "rel", mode + ".csv"))
 
 if __name__ == "__main__":
     run()
