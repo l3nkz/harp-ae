@@ -27,6 +27,7 @@ function run_cfs() {
             local prog_start=$(get_time)
 
             if [[ "$p" == !* ]]; then
+                export TETRIS_MAPPING="${TETRIS_MAPPING_BASE}/empty.yaml"
                 ${BINDIR}/${name} cfs 1>"$prog_log" 2>&1
             elif [[ "$p" == \?* ]]; then
                 args=$(cat ${BINDIR}/${name}.args)
