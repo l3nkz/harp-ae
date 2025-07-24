@@ -59,7 +59,10 @@ function run_td() {
                 LD_PRELOAD=${TD_LIB} ${BINDIR}/${name} 1>"$prog_log" 2>&1
             fi
 
+            local exit_code=$?
+            echo "exit code: $exit_code" >> "$prog_log"
             echo "total_ms: $(time_diff $prog_start)" >> "$prog_log"
+            exit $exit_code
         ) 1>>"$run_log" 2>&1 &
         pid=$!
 
