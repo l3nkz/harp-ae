@@ -173,11 +173,23 @@ for s in ${scenarios[@]}; do
     pname="$(human_readable $s)"
     printf "(${step}/${total_step}) $pname\n"
 
-    this_result_file="${result_dir}/$(save_name $s).csv"
-    echo "mode;time_ms;energy_uj" > "$this_result_file"
+    measure_result_file="${result_dir}/$(save_name $s).csv"
+    learning_result_file="${result_dir}/learning_$(save_name $s).csv"
 
     for m in ${modes[@]}; do
         printf " => ${m}: ";
+
+        if [[ $m =~ "learning" ]]; then
+            this_result_file="$learning_result_file"
+            if [ ! -e "$this_result_file" ]; then
+                echo "iteration;time_ms;energy_uj;stages" > "$this_result_file"
+            fi
+        else
+            this_result_file="$measure_result_file"
+            if [ ! -e "$this_result_file" ]; then
+                echo "mode;time_ms;energy_uj" > "$this_result_file"
+            fi
+        fi
 
         # Initialize and create output directories
         this_log_dir_base="${log_dir}/$(save_name $s)/${m}"
@@ -197,27 +209,31 @@ for s in ${scenarios[@]}; do
         success=$(warmup_${m} "$s" "$warmup_log_dir" "$warmup_trace_dir" "$this_learn_dir")
         if [ $success -eq 1 ]; then
             # Warm up is done, do the actual measurements now
-            for r in $(seq 1 $runs); do
-                tries=0
-                success=0
-                while [ $success -ne 1 ]; do
-                    printf "$r "
+            if [[ $m =~ "learning" ]]; then
+                run_${m} "$s" "$this_result_file" "$this_log_dir_base" "$this_trace_dir_base" "$this_learn_dir"
+            else
+                for r in $(seq 1 $runs); do
+                    tries=0
+                    success=0
+                    while [ $success -ne 1 ]; do
+                        printf "$r "
 
-                    # Initialize the output directories for this run
-                    this_log_dir="${this_log_dir_base}/run_$r-$tries"
-                    this_trace_dir="${this_trace_dir_base}/run_$r-$tries"
+                        # Initialize the output directories for this run
+                        this_log_dir="${this_log_dir_base}/run_$r-$tries"
+                        this_trace_dir="${this_trace_dir_base}/run_$r-$tries"
 
-                    mkdir -p "${this_log_dir}"
-                    mkdir -p "${this_trace_dir}"
+                        mkdir -p "${this_log_dir}"
+                        mkdir -p "${this_trace_dir}"
 
-                    success=$(run_${m} "$s" "$this_result_file" "$this_log_dir" "$this_trace_dir" "$this_learn_dir")
-                    if [ $success -ne 1 ]; then
-                        printf "!! "
-                        tries=$((tries + 1))
-                    fi
+                        success=$(run_${m} "$s" "$this_result_file" "$this_log_dir" "$this_trace_dir" "$this_learn_dir")
+                        if [ $success -ne 1 ]; then
+                            printf "!! "
+                            tries=$((tries + 1))
+                        fi
+                    done
+                    checkpoint "$s" "$m" "$r"
                 done
-                checkpoint "$s" "$m" "$r"
-            done
+            fi
         else 
             printf "Failure!"
         fi
