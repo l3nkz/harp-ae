@@ -176,9 +176,12 @@ for s in ${scenarios[@]}; do
     measure_result_file="${result_dir}/$(save_name $s).csv"
     learning_result_file="${result_dir}/learning_$(save_name $s).csv"
 
+    scenario_log_dir="${log_dir}/$(save_name $s)"
+    scenario_trace_dir="${trace_dir}/$(save_name $s)"
+    scenario_learn_dir="${learn_dir}/$(save_name $s)"
+
     for m in ${modes[@]}; do
         printf " => ${m}: ";
-
         if [[ $m =~ "learning" ]]; then
             this_result_file="$learning_result_file"
             if [ ! -e "$this_result_file" ]; then
@@ -192,10 +195,9 @@ for s in ${scenarios[@]}; do
         fi
 
         # Initialize and create output directories
-        this_log_dir_base="${log_dir}/$(save_name $s)/${m}"
-        this_trace_dir_base="${trace_dir}/$(save_name $s)/${m}"
-
-        this_learn_dir="${learn_dir}/$(save_name $s)/${m}"
+        this_log_dir_base="${scenario_log_dir}/${m}"
+        this_trace_dir_base="${scenario_trace_dir}/${m}"
+        this_learn_dir="${scenario_learn_dir}/${m}"
  
         mkdir -p "${this_learn_dir}"
 
@@ -239,6 +241,15 @@ for s in ${scenarios[@]}; do
         fi
         printf "\n"
     done
+    # Compress the directory containing the logs and other debugging data when done with the scenario
+    printf " -> Compressing debug data ("
+    printf "logs "
+    tar -caf "${scenario_log_dir}.tar.gz" -C "$log_dir" "$(save_name $s)" && rm -rf "${scenario_log_dir}"
+    printf "traces "
+    tar -caf "${scenario_trace_dir}.tar.gz" -C "$trace_dir" "$(save_name $s)" && rm -rf "${scenario_trace_dir}"
+    printf "learndb)"
+    tar -caf "${scenario_trace_dir}.tar.gz" -C "$learn_dir" "$(save_name $s)" && rm -rf "${scenario_learn_dir}"
+    printf " DONE\n"
 
     step=$((step + 1))
 done
