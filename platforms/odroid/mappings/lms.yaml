@@ -1,0 +1,274 @@
+application: LMS
+platform: odroid
+type: dpm
+mapping_template:
+  processes: [source, send, collect]
+  par_regions:
+    signPr: [sign]
+    verifyPr: [verify]
+  metadata: [utility, power]
+mappings:
+  - name: 0B1L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+      verifyPr:
+        - [ARM00]
+    metadata: [0.1332567943531241, 421.553062687334]
+  - name: 0B2L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+      verifyPr:
+        - [ARM01]
+    metadata: [0.2689224119814506, 578.4981191420206]
+  - name: 0B3L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+      verifyPr:
+        - [ARM01]
+        - [ARM02]
+    metadata: [0.4126499144114003, 737.9914465145151]
+  - name: 0B4L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+      verifyPr:
+        - [ARM01]
+        - [ARM03]
+    metadata: [0.551830583026679, 893.5593987178013]
+  - name: 1B0L
+    processes: [ARM04, ARM04, ARM04]
+    par_regions:
+      signPr:
+        - [ARM04]
+      verifyPr:
+        - [ARM04]
+    metadata: [0.269699843686882, 2377.7699878813423]
+  - name: 1B1L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+      verifyPr:
+        - [ARM00]
+        - [ARM04]
+    metadata: [0.3946690037858246, 2631.5033090625907]
+  - name: 1B2L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM04]
+    metadata: [0.5145337635662421, 2783.374587442158]
+  - name: 1B3L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM02]
+        - [ARM04]
+    metadata: [0.6173598407944197, 2902.6356322994347]
+  - name: 1B4L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM03]
+        - [ARM04]
+    metadata: [0.7234919692622276, 3044.7949652998627]
+  - name: 2B0L
+    processes: [ARM04, ARM04, ARM04]
+    par_regions:
+      signPr:
+        - [ARM04]
+      verifyPr:
+        - [ARM05]
+    metadata: [0.4821182446963822, 3885.5133104559054]
+  - name: 2B1L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+      verifyPr:
+        - [ARM00]
+        - [ARM05]
+    metadata: [0.590375388306216, 3686.1699166487256]
+  - name: 2B2L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM05]
+    metadata: [0.7077234348499374, 3811.100011061132]
+  - name: 2B3L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM02]
+        - [ARM05]
+    metadata: [0.774467033493547, 3858.839270313754]
+  - name: 2B4L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+      verifyPr:
+        - [ARM01]
+        - [ARM03]
+        - [ARM05]
+    metadata: [0.8472407666927821, 3888.9540072608497]
+  - name: 3B0L
+    processes: [ARM04, ARM04, ARM04]
+    par_regions:
+      signPr:
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.6245129856925568, 3917.084474105887]
+  - name: 3B1L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM00]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.7685097140340517, 3794.404220925461]
+  - name: 3B2L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.8511243272604327, 3925.532177874836]
+  - name: 3B3L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM02]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.8850764850315278, 3928.9681840712874]
+  - name: 3B4L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM03]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.9357191605528068, 3972.872474224291]
+  - name: 4B0L
+    processes: [ARM04, ARM04, ARM04]
+    par_regions:
+      signPr:
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM05]
+        - [ARM07]
+    metadata: [0.6762568700676437, 4355.457995701803]
+  - name: 4B1L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM00]
+        - [ARM05]
+        - [ARM07]
+    metadata: [0.90661069684786, 4465.149241042172]
+  - name: 4B2L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM05]
+        - [ARM07]
+    metadata: [0.9682278465050002, 4689.301044149359]
+  - name: 4B3L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM02]
+        - [ARM05]
+        - [ARM07]
+    metadata: [0.9794802775935092, 4629.159667296015]
+  - name: 4B4L
+    processes: [ARM00, ARM00, ARM00]
+    par_regions:
+      signPr:
+        - [ARM00]
+        - [ARM02]
+        - [ARM04]
+        - [ARM06]
+      verifyPr:
+        - [ARM01]
+        - [ARM03]
+        - [ARM05]
+        - [ARM07]
+    metadata: [1.0, 4615.811935477569]

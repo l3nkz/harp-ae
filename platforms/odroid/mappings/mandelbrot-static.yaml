@@ -1,0 +1,70 @@
+application: mandelbrot
+platform: odroid
+type: dpm
+mapping_template:
+  processes: [gen, calc1, calc2, calc3, calc4, write]
+  metadata: [utility, power]
+mappings:
+  - name: 0B1L
+    processes: [ARM00, ARM00, ARM00, ARM00, ARM00, ARM00]
+    metadata: [0.0833320156384034, 380.4783479663356]
+  - name: 0B2L
+    processes: [ARM00, ARM00, ARM00, ARM01, ARM01, ARM01]
+    metadata: [0.1670692104527973, 507.7976509142928]
+  - name: 0B3L
+    processes: [ARM00, ARM00, ARM01, ARM02, ARM00, ARM01]
+    metadata: [0.1671149040071823, 510.1236441398501]
+  - name: 0B4L
+    processes: [ARM00, ARM00, ARM01, ARM02, ARM03, ARM01]
+    metadata: [0.3322000110311788, 761.8592736756676]
+  - name: 1B0L
+    processes: [ARM04, ARM04, ARM04, ARM04, ARM04, ARM04]
+    metadata: [0.2779889557405423, 1976.855659770873]
+  - name: 1B1L
+    processes: [ARM00, ARM00, ARM00, ARM04, ARM04, ARM00]
+    metadata: [0.1660803762763141, 913.0390989379804]
+  - name: 1B2L
+    processes: [ARM00, ARM00, ARM01, ARM04, ARM04, ARM01]
+    metadata: [0.3320822634256998, 1573.498519195324]
+  - name: 1B3L
+    processes: [ARM00, ARM00, ARM01, ARM02, ARM04, ARM01]
+    metadata: [0.3321987022657164, 1155.5351321963385]
+  - name: 1B4L
+    processes: [ARM00, ARM01, ARM02, ARM03, ARM04, ARM01]
+    metadata: [0.3321987022657164, 1155.5351321963385]
+  - name: 2B0L
+    processes: [ARM04, ARM04, ARM04, ARM05, ARM05, ARM05]
+    metadata: [0.5533237089047838, 3377.2451473193782]
+  - name: 2B1L
+    processes: [ARM00, ARM00, ARM04, ARM05, ARM05, ARM00]
+    metadata: [0.3299795721900021, 1854.6206610470624]
+  - name: 2B2L
+    processes: [ARM00, ARM00, ARM01, ARM04, ARM05, ARM01]
+    metadata: [0.3322654624550785, 1424.180194344619]
+  - name: 2B3L
+    processes: [ARM00, ARM00, ARM02, ARM04, ARM05, ARM01]
+    metadata: [0.3345500569347294, 1423.0662109243265]
+  - name: 2B4L
+    processes: [ARM00, ARM02, ARM03, ARM04, ARM05, ARM01]
+    metadata: [0.3364388655696889, 1432.6263585872289]
+  - name: 3B0L
+    processes: [ARM04, ARM04, ARM05, ARM06, ARM06, ARM05]
+    metadata: [0.5514636634751217, 3208.280417778476]
+  - name: 3B1L
+    processes: [ARM00, ARM00, ARM04, ARM05, ARM06, ARM00]
+    metadata: [0.3232658976157889, 1569.5203898160182]
+  - name: 3B2L
+    processes: [ARM00, ARM00, ARM04, ARM05, ARM06, ARM01]
+    metadata: [0.3332658976157889, 1569.5203898160182]
+  - name: 3B3L
+    processes: [ARM00, ARM02, ARM04, ARM05, ARM06, ARM01]
+    metadata: [0.3432658976157889, 1569.5203898160182]
+  - name: 4B0L
+    processes: [ARM04, ARM04, ARM05, ARM06, ARM07, ARM05]
+    metadata: [0.9895669522356532, 4379.263278957869]
+  - name: 4B1L
+    processes: [ARM00, ARM04, ARM05, ARM06, ARM07, ARM00]
+    metadata: [0.9999525644826563, 4348.087850578121]
+  - name: 4B2L
+    processes: [ARM00, ARM04, ARM05, ARM06, ARM07, ARM01]
+    metadata: [1.0, 4352.183548582204]

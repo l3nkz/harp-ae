@@ -1,0 +1,9 @@
+application: empty
+mapping_template:
+  metadata:
+  - utility
+  - power
+  - nr_threads
+mappings:
+platform: raptor-lake-8P16E
+type: OMP

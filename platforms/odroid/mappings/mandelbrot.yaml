@@ -1,0 +1,229 @@
+application: mandelbrot
+type: dpm
+platform: odroid
+mapping_template:
+  processes: [gen, write]
+  par_regions:
+    pr1: [calc]
+  metadata: [utility, power]
+mappings:
+  - name: 0B1L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+    metadata: [0.0659157959131318, 408.59081490690585]
+  - name: 0B2L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+    metadata: [0.1326230194889631, 502.3899857262254]
+  - name: 0B3L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+    metadata: [0.199109439405816, 628.5226470035973]
+  - name: 0B4L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM03]
+    metadata: [0.265512225366443, 754.4870512861277]
+  - name: 1B0L
+    processes: [ARM04, ARM04]
+    par_regions:
+      pr1:
+        - [ARM04]
+    metadata: [0.2199551562124449, 1938.4435518123544]
+  - name: 1B1L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM04]
+    metadata: [0.2863836482031628, 2138.4479253743502]
+  - name: 1B2L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM04]
+    metadata: [0.3526818709745539, 2266.2694171681983]
+  - name: 1B3L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM04]
+    metadata: [0.4185567139491755, 2402.625156633753]
+  - name: 1B4L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM03]
+        - [ARM04]
+    metadata: [0.4845928419097912, 2547.8117845899405]
+  - name: 2B0L
+    processes: [ARM04, ARM04]
+    par_regions:
+      pr1:
+        - [ARM04]
+        - [ARM05]
+    metadata: [0.439564416370575, 3348.2298460323727]
+  - name: 2B1L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM04]
+        - [ARM05]
+    metadata: [0.5059643276403983, 3590.916567576779]
+  - name: 2B2L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM04]
+        - [ARM05]
+    metadata: [0.571882276400493, 3733.662965689632]
+  - name: 2B3L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM04]
+        - [ARM05]
+    metadata: [0.6372394715505317, 3893.759717651548]
+  - name: 2B4L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM03]
+        - [ARM04]
+        - [ARM05]
+    metadata: [0.7023529164388747, 4038.939631607721]
+  - name: 3B0L
+    processes: [ARM04, ARM04]
+    par_regions:
+      pr1:
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.618616366178663, 3859.8637016047646]
+  - name: 3B1L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.674709381596356, 3975.939613990082]
+  - name: 3B2L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.7295192958700067, 3992.8847598663374]
+  - name: 3B3L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.7837742711327506, 4041.069748342817]
+  - name: 3B4L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM03]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+    metadata: [0.8408644648071694, 4134.9506973114485]
+  - name: 4B0L
+    processes: [ARM04, ARM04]
+    par_regions:
+      pr1:
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+        - [ARM07]
+    metadata: [0.7887621611410219, 4361.295562954567]
+  - name: 4B1L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+        - [ARM07]
+    metadata: [0.8454081826349957, 4488.995735310867]
+  - name: 4B2L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+        - [ARM07]
+    metadata: [0.9002156043659884, 4579.283277186363]
+  - name: 4B3L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+        - [ARM07]
+    metadata: [0.9557771546297356, 4698.867360077829]
+  - name: 4B4L
+    processes: [ARM00, ARM00]
+    par_regions:
+      pr1:
+        - [ARM00]
+        - [ARM01]
+        - [ARM02]
+        - [ARM03]
+        - [ARM04]
+        - [ARM05]
+        - [ARM06]
+        - [ARM07]
+    metadata: [1.0, 4770.478676745753]

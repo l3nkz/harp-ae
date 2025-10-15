@@ -1,0 +1,9 @@
+application: empty
+mapping_template:
+  metadata:
+  - utility
+  - power
+  - nr_threads
+mappings:
+platform: odroid
+type: OMP
