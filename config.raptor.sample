@@ -1,5 +1,6 @@
 # Configuration file
 
+
 # Required configuration for the platform specific properties
 declare -A platform_routines
 
@@ -25,7 +26,7 @@ export BINDIR="${SCRIPTDIR}/bench"
 #      and will run and configure the application by itself. Importantly, this binary/script
 #      will also do the necessary TETRiS specific configuration.
 #      Such scenarios should be prefixed with a '!'.
-scenarios=("abc|bc" "!foobar|bar|!foo" "?blub|foo")
+scenarios=("bt.C" "cg.C" "ep.C" "ft.C" "is.C" "lu.C" "mg.C" "sp.C" "ua.C" "?binpack" "?fractal" "?parallel-preorder" "?pi" "?primes" "?seismic" "!vgg" "!alexnet" "bt.C|cg.C" "ep.C|ft.C" "is.C|lu.C" "mg.C|sp.C" "bt.C|cg.C|ep.C" "ft.C|lu.C|sp.C" "mg.C|sp.C|ua.C" "bt.C|cg.C|ep.C|ft.C" "is.C|lu.C|mg.C|sp.C" "bt.C|ep.C|is.C|mg.C|ua.C" "?binpack|?fractal" "?pi|?primes" "?binpack|?fractal|?parallel-preorder" "?pi|?primes|?seismic" "cg.C|?pi|?primes|mg.C" "!vgg|sp.C" "!alexnet|?seismic" "!vgg|ft.C|?primes")
 
 # 2) The number of repetitions per application and benchmarking mode in order to
 #    produce statistically reliable values. At least 10 should be chosen here.
@@ -44,7 +45,7 @@ runs=10
 #      in parallel and not separately
 #   f) *tetris-noscaling* -- The same as *tetris* but dynamic application scaling is disabled
 #   h) *learning* -- Measure the learning phase of tetris
-modes=("cfs" "td" "tetris" "tetris-offline")
+modes=("cfs" "td" "tetris" "tetris-offline" "tetris-noscaling" "learning")
 
 
 # Other optional configuration variables

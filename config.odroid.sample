@@ -3,11 +3,8 @@
 # Required configuration for the platform specific properties
 declare -A platform_routines
 
-# Uncomment for Raptor Lake system
-source "${SCRIPTDIR}/configs/raptor.conf"
-
 # Uncomment for Odroid system
-#source "${SCRIPTDIR}/configs/odroid.conf"
+source "${SCRIPTDIR}/configs/odroid.conf"
 
 # All the configuration options for TETRiS
 source "${SCRIPTDIR}/configs/tetris.conf"
@@ -25,7 +22,7 @@ export BINDIR="${SCRIPTDIR}/bench"
 #      and will run and configure the application by itself. Importantly, this binary/script
 #      will also do the necessary TETRiS specific configuration.
 #      Such scenarios should be prefixed with a '!'.
-scenarios=("abc|bc" "!foobar|bar|!foo" "?blub|foo")
+scenarios=("bt.A" "cg.A" "ep.A" "ft.A" "is.A" "lu.A" "mg.A" "sp.A" "ua.A" "bt.A|cg.A" "ep.A|ft.A" "is.A|lu.A" "mg.A|sp.A" "bt.A|cg.A|ep.A" "ft.A|is.A|lu.A" "mg.A|sp.A|ua.A" "bt.A|cg.A|ep.A|ft.A" "is.A|lu.A|mg.A|sp.A" "bt.A|ep.A|is.A|mg.A|ua.A" "!mandelbrot" "!lms" "!lms-static" "!mandelbrot-static" "!lms|!mandelbrot" "!lms|!mandelbrot|!lms-static" "ep.A|ft.A|!lms" "bt.A|cg.A|!mandelbrot")
 
 # 2) The number of repetitions per application and benchmarking mode in order to
 #    produce statistically reliable values. At least 10 should be chosen here.
@@ -44,7 +41,7 @@ runs=10
 #      in parallel and not separately
 #   f) *tetris-noscaling* -- The same as *tetris* but dynamic application scaling is disabled
 #   h) *learning* -- Measure the learning phase of tetris
-modes=("cfs" "td" "tetris" "tetris-offline")
+modes=("cfs" "tetris-offline")
 
 
 # Other optional configuration variables
