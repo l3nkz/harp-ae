@@ -1,0 +1,590 @@
+\documentclass[9pt]{standalone}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\newcommand{\mean}{\textsc{Harp}}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usetikzlibrary{colorbrewer}
+
+\pgfdeclarelayer{bg}
+\pgfdeclarelayer{fg}
+\pgfsetlayers{bg,main,fg}
+
+\pgfkeys{%
+  /tikz/on layer/.code={
+    \pgfonlayer{#1}\begingroup
+    \aftergroup\endpgfonlayer
+    \aftergroup\endgroup
+  },
+}
+
+\makeatletter
+\pgfdeclareshape{coordnode}{
+  \inheritsavedanchors[from=rectangle]
+  \inheritanchorborder[from=rectangle]
+  \inheritanchor[from=rectangle]{center}
+  \inheritanchor[from=rectangle]{base}
+  \inheritanchor[from=rectangle]{north}
+  \inheritanchor[from=rectangle]{north east}
+  \inheritanchor[from=rectangle]{east}
+  \inheritanchor[from=rectangle]{south east}
+  \inheritanchor[from=rectangle]{south}
+  \inheritanchor[from=rectangle]{south west}
+  \inheritanchor[from=rectangle]{west}
+  \inheritanchor[from=rectangle]{north west}
+  \backgroundpath{
+    %  store lower right in xa/ya and upper right in xb/yb
+    \southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+    \northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+    \pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+    \pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+ }
+}
+
+\pgfplotsset{
+    /pgfplots/flexible xticklabels from table/.code n args={3}{%
+        \pgfplotstableread[#3]{#1}\coordinate@table
+        \pgfplotstablegetcolumn{#2}\of{\coordinate@table}\to\pgfplots@xticklabels
+        \let\pgfplots@xticklabel=\pgfplots@user@ticklabel@list@x
+    }
+}
+\makeatother
+
+\definecolor{TimeColor}{HTML}{009ACD}
+\definecolor{EnergyColor}{HTML}{43CD80}
+% Uncomment if old colors
+%\definecolor{TimeColor}{HTML}{D95F02}
+%\definecolor{EnergyColor}{HTML}{1B9E77}
+
+\pgfplotsset{
+    invisible coord/.style={
+        /tikz/coordinate,
+    },
+    coord connection anchor/.initial=south,
+    coord connection direction/.initial=east,
+    coord connection/.style n args={4}{
+        inner xsep=1pt,
+        inner ysep=1pt,
+        xshift=-#3,
+        yshift=-#4,
+        anchor=#1 #2,
+        append after command={
+            [rounded corners=2pt](\tikzlastnode.#1) -- (\tikzlastnode.#1 #2) -- ++(#3, #4)
+        }
+    },
+    visible coord/.style={
+        coord connection/.code={
+            \edef\coordanchor{\pgfkeysvalueof{/pgfplots/coord connection anchor}}
+            \edef\coorddirection{\pgfkeysvalueof{/pgfplots/coord connection direction}}
+            \def\north{north}
+            \def\east{east}
+            \ifx\coordanchor\north
+                \def\yshift{2pt}
+            \else
+                \def\yshift{-2pt}
+            \fi
+            \ifx\coorddirection\east
+                \def\xshift{2pt}
+            \else
+                \def\xshift{-2pt}
+            \fi
+            \edef\temp{\noexpand\pgfkeysalso{/pgfplots/coord connection={\coordanchor}{\coorddirection}{\xshift}{\yshift}}}
+            \temp
+        },
+        coord connection,
+    },
+    nodes near coords above/.style={
+        every node near coord/.append style={
+            check for above values/.code={
+                \begingroup
+                % this group is merely to switch to FPU locally.
+                % Might be unnecessary, but who knows.
+                \pgfkeys{/pgf/fpu}
+                \pgfmathparse{\pgfplotspointmeta<#1}
+                \global\let\notabove=\pgfmathresult
+                \endgroup
+                %
+                % simplifies debugging:
+                %\show\above
+                %
+                \pgfmathfloatcreate{1}{1.0}{0}
+                \let\ONE=\pgfmathresult
+                \ifx\notabove\ONE
+                    % AH: our condition 'y < #1' is met.
+                    \pgfkeysalso{/pgfplots/invisible coord}
+                \else
+                    \pgfkeysalso{/pgfplots/visible coord}
+                \fi
+            },
+            check for above values,
+        }
+    },
+    nodes near coords below/.style={
+        every node near coord/.append style={
+            check for below values/.code={
+                \begingroup
+                % this group is merely to switch to FPU locally.
+                % Might be unnecessary, but who knows.
+                \pgfkeys{/pgf/fpu}
+                \pgfmathparse{\pgfplotspointmeta>#1}
+                \global\let\notbelow=\pgfmathresult
+                \endgroup
+                %
+                % simplifies debugging:
+                %\show\below
+                %
+                \pgfmathfloatcreate{1}{1.0}{0}
+                \let\ONE=\pgfmathresult
+                \ifx\notbelow\ONE
+                    % AH: our condition 'y > #1' is met.
+                    \pgfkeysalso{/pgfplots/invisible coord}
+                \else
+                    \pgfkeysalso{/pgfplots/visible coord}
+                \fi
+            },
+            check for below values,
+        },
+    },
+    nodes near coords outside/.style 2 args={
+        every node near coord/.append style={
+            check for outside values/.code={
+                \begingroup
+                \pgfkeys{/pgf/fpu}
+                \pgfmathparse{\pgfplotspointmeta<#1}
+                \global\let\notabove=\pgfmathresult
+                \pgfmathparse{\pgfplotspointmeta>#2}
+                \global\let\notbelow=\pgfmathresult
+                \endgroup
+                %
+                \pgfmathfloatcreate{1}{1.0}{0}
+                \let\ONE=\pgfmathresult
+                \ifx\notabove\ONE
+                    \ifx\notbelow\ONE
+                        % Both conditions are met
+                        \pgfkeysalso{/pgfplots/invisible coord}
+                    \else
+                        % Only below
+                        \pgfkeysalso{/pgfplots/visible coord}
+                    \fi
+                \else
+                    % Only above
+                    \pgfkeysalso{/pgfplots/visible coord}
+                \fi
+            },
+            check for outside values,
+        },
+    },
+    x shift/.style 2 args={
+        x filter/.code={\pgfmathparse{\pgfmathresult+((#1+.5-#2*.5)*.18)}}
+    },
+    table/filtered y error/.style n args={4}{
+        % Filter error bar visualization by multiple arguments
+        % #1 --> column name
+        % #2 --> starting at which percentage should the bars be shown
+        % #3 + #4 --> only show error bars when the corresponding y value is within this min/max range
+        table/y error plus expr={\thisrow{#1} < #3 && \thisrow{#1} > #4 && \thisrow{err_#1_max} > (#2/100) ? \thisrow{err_#1_max} : nan},
+        table/y error minus expr={\thisrow{#1} < #3 && \thisrow{#1} > #4 && \thisrow{err_#1_min} > (#2/100) ? \thisrow{err_#1_min} : nan}
+    },
+}
+
+\pgfplotsset{
+    improplot/.style={
+        only marks,
+        ylabel=Improvement Factor,
+        ymin=0.34,
+        ymax=6,
+        restrict y to domain*=-0.375:0.75,
+        flexible xticklabels from table={\base/rel/cfs.csv}{scenario}{col sep=comma},
+        xtick=data,
+        xticklabel style={rotate=20, font=\tiny, anchor=north east, yshift=3pt, xshift=5pt},
+        every major x tick/.append style={opacity=0},
+        ytick={0.1,0.2,0.6,2,4},
+        yticklabels={0.1,0.2,0.6,2,4},
+        yticklabel style={font=\tiny},
+        y label style={at={(axis description cs:-0.04,.5)},anchor=south},
+        extra y ticks={1},
+        extra y tick labels={\textit{CFS}},
+        extra y tick style={grid style={densely dotted, black}},
+        grid=major,
+        axis x line=bottom,
+        x axis line style={draw opacity=0, -},
+        axis y line=left,
+        y axis line style={{Stealth[round]}-{Stealth[round]}},
+        enlarge x limits={abs=0.4},
+        enlarge y limits={abs=0.3},
+        clip=false,
+        error bars/y dir=both,
+        error bars/y explicit relative,
+        error bars/error bar style=solid
+    },
+    energy plot/.style={
+        EnergyColor,
+        coord connection anchor=south,
+        every mark/.append style={fill=EnergyColor},
+        mark size=1.8pt,
+        visualization depends on=rawy\as\rawy,
+        nodes near coords={\pgfmathprintnumber[fixed]{\rawy}},
+        nodes near coords style={font=\tiny, text=black},
+        nodes near coords outside={0.7}{-0.35},
+        table/y={energy},
+        table/filtered y error={energy}{5}{5}{0.45},
+        table/col sep=comma,
+    },
+    time plot/.style={
+        TimeColor,
+        coord connection anchor=north,
+        every mark/.append style={fill=TimeColor},
+        mark size=1.8pt,
+        visualization depends on=rawy\as\rawy,
+        nodes near coords={\pgfmathprintnumber[fixed]{\rawy}},
+        nodes near coords style={font=\tiny, text=black},
+        nodes near coords outside={0.7}{-0.35},
+        table/y={time},
+        table/filtered y error={time}{5}{5}{0.45},
+        table/col sep=comma,
+    },
+    runtime plot/.style={
+        no markers,
+        visualization depends on={\thisrow{time}\as\mylabel},
+        nodes near coords={\pgfmathprintnumber[fixed]{\mylabel}\,s},
+        nodes near coords style={font=\tiny, text=black, draw=gray!30, fill=gray!30, rounded corners=2pt, inner sep=.8pt},
+        table/x expr=\coordindex,
+        table/col sep=comma,
+    }
+}
+
+\begin{document}
+
+% Raptor Lake figure
+\begin{tikzpicture}
+\def\base{data/raptor/single}
+\def\modes{td/diamond/east, tetris/oplus/east, tetris-offline/*/west, tetris-noscaling/o/east}
+
+%Our table for the positions of the CFS runtimes
+\pgfplotstableread[header=has colnames, col sep=comma]{\base/raw/cfs.csv}\cfsruntime
+\pgfplotstableread[header=has colnames]{
+pos
+0.3
+0.3
+0.3
+6
+0.3
+0.3
+0.3
+0.3
+3
+0.3
+0.3
+0.3
+0.3
+0.3
+0.3
+6
+0.3
+}\runtimeypos
+\pgfplotstablecreatecol[copy column from table={\runtimeypos}{pos}] {ypos} {\cfsruntime}
+
+\begin{axis} [
+    improplot,
+    width=\textwidth,
+    height=4.3cm,
+    ymode=log,
+    log basis y=10,
+    name=single
+]
+    % Create legend entries explicitly
+    \foreach \mode/\mark/\direction in \modes {
+        \edef\temp{
+            \noexpand\addlegendimage{only marks, black, mark=\mark}
+            \noexpand\label{leg_rap_\mode}
+        }
+        \temp
+    }
+    \addlegendimage{only marks, EnergyColor, mark=square*}\label{leg_rap_energy}
+    \addlegendimage{only marks, TimeColor, mark=square*}\label{leg_rap_time}
+
+    \addplot+ [
+        no markers,
+    ] table [x expr=\coordindex, y={energy}, col sep=comma] {\base/rel/cfs.csv};
+
+    \foreach \mode/\mark/\direction [count=\i from 0] in \modes {
+        \edef\temp{%
+            \noexpand\addplot+ [energy plot,
+                mark=\mark,
+                coord connection direction=\direction,
+                x shift={\i}{4}]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};
+
+            \noexpand\addplot+ [time plot,
+                mark=\mark,
+                coord connection direction=\direction,
+                x shift={\i}{4}]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};%
+        }
+        \temp
+    }
+
+    \addplot+ [runtime plot] table[y=ypos] {\cfsruntime};
+\end{axis}
+
+\def\base{data/raptor/multi}
+\def\modes{td/diamond/east, tetris/oplus/east, tetris-offline/*/west, tetris-noscaling/o/east}
+
+%Our table for the positions of the CFS runtimes
+\pgfplotstableread[header=has colnames, col sep=comma]{\base/raw/cfs.csv}\cfsruntime
+\pgfplotstableread[header=has colnames]{
+pos
+0.3
+0.3
+0.3
+0.3
+6
+0.3
+0.3
+0.3
+0.3
+0.3
+6
+6
+6
+6
+0.3
+0.3
+6
+6
+}\runtimeypos
+\pgfplotstablecreatecol[copy column from table={\runtimeypos}{pos}] {ypos} {\cfsruntime}
+
+\begin{axis} [
+    improplot,
+    width=\textwidth,
+    height=4.3cm,
+    ymode=log,
+    log basis y=10,
+    name=multi,
+    anchor=north,
+    at=(single.south),
+    yshift=-.8cm,
+]
+    % Add the cfs plot (without drawing it for in order to set the scene
+    \addplot+ [
+        no markers,
+    ] table [x expr=\coordindex, y={energy}, col sep=comma] {\base/rel/cfs.csv};
+
+    \foreach \mode/\mark/\direction [count=\i from 0] in \modes {
+        \edef\temp{%
+            \noexpand\addplot+ [energy plot,
+                mark=\mark,
+                coord connection direction=\direction,
+                x shift={\i}{4}]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};
+
+            \noexpand\addplot+ [time plot,
+                mark=\mark,
+                coord connection direction=\direction,
+                x shift={\i}{4}]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};%
+        }
+        \temp
+    }
+
+    \addplot+ [runtime plot] table[y=ypos] {\cfsruntime};
+\end{axis}
+
+% Draw the legend explicitly
+\begin{pgfonlayer}{fg}
+\node[font=\tiny, anchor=north] (modes) at (rel axis cs: 0.42,1.5) {
+\begin{tabular}{ll}
+\ref{leg_rap_td} ITD &
+\ref{leg_rap_tetris-offline} \mean{} (Offline) \\
+\ref{leg_rap_tetris} \mean{} &
+\ref{leg_rap_tetris-noscaling} \mean{} (No Scaling)
+\end{tabular}
+};
+\node[left=0pt of modes] (modes_text) {\textbf{\footnotesize{Modes}}};
+
+\node[right=.6cm of modes] (metrics_text) {\textbf{\footnotesize{Metrics}}};
+\node[font=\tiny, right=0pt of metrics_text] (metrics) {
+\begin{tabular}{ll}
+\ref{leg_rap_time} Makespan &
+\ref{leg_rap_energy} Energy
+\end{tabular}
+};
+\end{pgfonlayer}
+\node[
+    fit=(modes_text)(metrics),
+    draw,
+    rounded corners=3pt,
+    fill=white,
+    inner sep=.5pt
+    ] {};
+
+\end{tikzpicture}
+
+% Odroid figure
+\begin{tikzpicture}
+\def\base{data/odroid/single}
+\def\modes{tetris/*/east}
+
+%Our table for the positions of the CFS runtimes
+\pgfplotstableread[header=has colnames, col sep=comma]{\base/raw/cfs.csv}\cfsruntime
+\pgfplotstableread[header=has colnames]{
+pos
+6
+0.3
+6
+0.3
+6
+0.3
+6
+0.3
+6
+0.3
+3.6
+0.3
+3.6
+}\runtimeypos
+\pgfplotstablecreatecol[copy column from table={\runtimeypos}{pos}] {ypos} {\cfsruntime}
+
+\begin{axis} [
+    improplot,
+    width=.55\textwidth,
+    height=4.3cm,
+    y label style={at={(axis description cs:-0.06,.5)},anchor=south},
+    ymode=log,
+    log basis y=10,
+    name=single,
+    % We need to adjust some values from the original plot style
+    enlarge x limits={abs=0.7},
+    extra y tick labels={\textit{EAS}},
+]
+    % Create legend entries explicitly
+    \foreach \mode/\mark in \modes {
+        \edef\temp{
+            \noexpand\addlegendimage{only marks, black, mark=\mark}
+            \noexpand\label{leg_odr_\mode}
+        }
+        \temp
+    }
+    \addlegendimage{only marks, EnergyColor, mark=square*}\label{leg_odr_energy}
+    \addlegendimage{only marks, TimeColor, mark=square*}\label{leg_odr_time}
+
+    \addplot+ [
+        no markers,
+    ] table [x expr=\coordindex, y={energy}, col sep=comma] {\base/rel/cfs.csv};
+
+    \foreach \mode/\mark/\direction [count=\i from 0] in \modes {
+        \edef\temp{%
+            \noexpand\addplot+ [energy plot,
+                mark=\mark,
+                coord connection direction=\direction]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};
+
+            \noexpand\addplot+ [time plot,
+                mark=\mark,
+                coord connection direction=\direction]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};%
+        }
+        \temp
+    }
+
+    \addplot+ [runtime plot] table[y=ypos] {\cfsruntime};
+\end{axis}
+
+\def\base{data/odroid/multi}
+
+%Our table for the positions of the CFS runtimes
+\pgfplotstableread[header=has colnames, col sep=comma]{\base/raw/cfs.csv}\cfsruntime
+\pgfplotstableread[header=has colnames]{
+pos
+3.6
+0.3
+3.6
+0.3
+3.6
+0.3
+3.6
+0.3
+6
+0.3
+6
+0.3
+6
+0.3
+}\runtimeypos
+\pgfplotstablecreatecol[copy column from table={\runtimeypos}{pos}] {ypos} {\cfsruntime}
+
+\begin{axis} [
+    improplot,
+    width=.55\textwidth,
+    height=4.3cm,
+    ymode=log,
+    log basis y=10,
+    name=multi,
+    anchor=west,
+    at=(single.east),
+    xshift=1em,
+    % We need to adjust some values from the original plot style
+    enlarge x limits={abs=0.6},
+    y axis line style={draw opacity=0, -},
+    ylabel={},
+    extra y tick style={text opacity=0},
+    yticklabel style={text opacity=0},
+    every major y tick/.append style={opacity=0},
+]
+    % Add the cfs plot (without drawing it for in order to set the scene
+    \addplot+ [
+        no markers,
+    ] table [x expr=\coordindex, y={energy}, col sep=comma] {\base/rel/cfs.csv};
+
+    \foreach \mode/\mark/\direction [count=\i from 0] in \modes {
+        \edef\temp{%
+            \noexpand\addplot+ [energy plot,
+                mark=\mark,
+                coord connection direction=\direction]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};
+
+            \noexpand\addplot+ [time plot,
+                mark=\mark,
+                coord connection direction=\direction]
+            table[x expr=\noexpand\coordindex] {\base/rel/\mode.csv};%
+        }
+        \temp
+    }
+
+    \addplot+ [runtime plot] table[y=ypos] {\cfsruntime};
+\end{axis}
+
+%\draw[thick] ($(single.south east) + (.5em,0)$) -- ($(single.north east) + (.5em, -1em)$);
+
+% Draw the legend explicitly
+\begin{pgfonlayer}{fg}
+\node[fill=white, font=\tiny, anchor=north] (modes) at (rel axis cs: 0.95,1.5) {
+\begin{tabular}{l}
+\ref{leg_odr_tetris} \mean{} (Offline)
+\end{tabular}
+};
+\node[left=0pt of modes] (modes_text) {\textbf{\footnotesize{Modes}}};
+
+\node[right=.6cm of modes] (metrics_text) {\textbf{\footnotesize{Metrics}}};
+\node[font=\tiny, right=0pt of metrics_text] (metrics) {
+\begin{tabular}{ll}
+\ref{leg_odr_time} Makespan &
+\ref{leg_odr_energy} Energy 
+\end{tabular}
+};
+\end{pgfonlayer}
+\node[
+    fit=(modes_text)(metrics), 
+    draw,
+    rounded corners=3pt,
+    fill=white,
+    inner sep=.5pt,
+    ] {};
+\end{tikzpicture}
+\end{document}
