@@ -9,7 +9,7 @@ source "$SCRIPTDIR/utils/printing.inc.sh"
 
 now=$(date "+%y%m%d_%H%M%S")
 
-printf "E-Mapper Benchmark Suite\n -- Measure Script --\n\n"
+printf "HARP Benchmark Suite\n -- Measure Script --\n\n"
 
 if [ ! -e "${SCRIPTDIR}/config.inc.sh" ]; then
     printf "Missing config file 'config.inc.sh'!\n"
