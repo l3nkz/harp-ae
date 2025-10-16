@@ -3,6 +3,19 @@
 Within this repository you will find the scripts and necessary information
 to validate the artifacts of the HARP Middleware paper.
 
+## Evaluation Time
+
+The whole artifact evaluation takes a significant amount of time. Be aware when starting this and 
+maybe run it with terminal emulators such as `tmux` or `screen`.
+
+We approximate that the individual steps take the following amount of time:
+
+- Preparation -- ~1 day
+- OP-Table generation (optional) -- ~1 week
+- Measurements Raptor Lake -- ~1 week
+- Measurements Odroid --  ~3 days
+- Postprocessing --  ~10 minutes
+
 ## Preparation
 
 In order to perform the evaluation of the HARP paper, various preparations have to be done.
@@ -158,6 +171,8 @@ done
 
 *These benchmarks are only needed to evaluate the Odroid system.*
 
+**Don't redistribute this code as this is not open sourced yet!**
+
 Download the sources for the KPN framework and the benchmarks and compile them as follows:
 
 First the KPN framework
@@ -203,7 +218,7 @@ workon harp
 Install the python harp library. They are included in the HARP directory
 
 ```
-cd harp/py_client
+cd harp/client_py
 pip install .
 ```
 
@@ -241,7 +256,7 @@ sudo ./prepare.sh
 In order to use the HARP RM with offline generated operating points these need to be generated. For 
 that one has to execute all benchmarks at all possible configurations and record various hardware
 properties. The following commands will generate the necessary tables. Be aware that this step takes
-a significant amount of time (~1w). Alternatively one can also use the operating point tables shipped
+a significant amount of time. Alternatively one can also use the operating point tables shipped
 with this repository.
 
 ```
@@ -267,7 +282,7 @@ your system or use an appropriate python environment.
 ## Run the Measurement
 
 In order run the whole measurement suite just run the following command. Be aware that this step takes
-a significant amount of time (~4d).
+a significant amount of time.
 
 ```
 ./measure.sh
