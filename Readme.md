@@ -1,7 +1,7 @@
-# HARP Artifact Evaluation Script
+# HARP Artifact Evaluation
 
 Within this repository you will find the scripts and necessary information
-to validate the artifacts of the following HARP Middleware paper.
+to validate the artifacts of the HARP Middleware paper.
 
 ## Preparation
 
@@ -71,9 +71,8 @@ cp config.raptorlake.sample .config
 make
 ```
 
-Last, install the kernel and the generated device tree to your boot partition and make it the
-default boot option. This part depends on your distribution. For Debian you can use the following
-steps:
+Last, install the kernel to your boot partition and make it the default boot option.
+This part depends on your distribution. For Debian you can use the following steps:
 
 ```
 make bindeb-pkg
@@ -107,7 +106,7 @@ make install
 ```
 
 When everything compiles correctly, the library files should be located in the base directory in `lib`
-and the HARP server binary in the base directory in `bin`.
+and the HARP server binaries in the base directory in `bin`.
 
 ### Compiling Benchmarks
 
@@ -236,7 +235,7 @@ script from this repository as root to setup the necessary configs.
 sudo ./prepare.sh
 ```
 
-## (Optional) Build the  Offline Operating Point Tables
+## (Optional) Build the Offline Operating Point Tables
 
 In order to use the HARP RM with offline generated operating points these need to be generated. For 
 that one has to execute all benchmarks at all possible configurations and record various hardware
