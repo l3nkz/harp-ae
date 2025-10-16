@@ -21,7 +21,7 @@ source "$SCRIPTDIR/config.inc.sh"
 # Prepare the environment for our measurements
 printf "Setting up the environment\n"
 printf " - Allowing access to perf "
-echo 0 > /proc/sys/kernel/perf_event_paranoid
+echo -1 > /proc/sys/kernel/perf_event_paranoid
 if [ $? -ne 0 ]; then
     printf "Failure!\n"
     exit 1;

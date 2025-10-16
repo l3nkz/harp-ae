@@ -38,7 +38,7 @@ mkdir -p "$result_dir"
 mkdir -p "$log_dir"
 
 
-export TETRIS_MAPPING="$EMPTY_MAPPING"
+export TETRIS_MAPPING="${TETRIS_MAPPING_BASE}/empty.yaml"
 export TETRIS_SERVER="${SCRIPTDIR}/bin/tetrismockserver"
 export TETRIS_LIB="${SCRIPTDIR}/lib/libtetrisclientlegacy.so"
 
