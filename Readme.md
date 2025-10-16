@@ -336,3 +336,9 @@ Rscript learnplots.R data/learning/learn.csv data/learning/base.csv
 ```
 
 This should create a file 'learnplots.pdf' containing the learning graphs as used in the paper.
+
+### Comparing to Paper Figures
+
+The repository also contains the raw results that we used for the paper. They are provided in 
+the folder `paper_results`. Accordingly, following the same steps as described before, one 
+can also generate the figures from the paper.
