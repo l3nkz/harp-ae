@@ -21,6 +21,9 @@ function run_overhead() {
 
     local run_log="$log_base_dir/run.log"
 
+    # Delete old learning data since we don't really use them in this mode
+    rm "$learn_dir/*"
+
     # Start the TETRiS server
     ${TETRIS_SERVER} -p $TETRIS_PLATFORM -t "$trace_log" -s "$learn_dir" $TETRIS_SERVER_EXTRA_ARGS 1>"$server_log" 2>&1 &
     local server_pid=$!

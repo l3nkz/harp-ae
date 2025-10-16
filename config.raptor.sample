@@ -45,7 +45,8 @@ runs=10
 #      in parallel and not separately
 #   f) *tetris-noscaling* -- The same as *tetris* but dynamic application scaling is disabled
 #   h) *learning* -- Measure the learning phase of tetris
-modes=("cfs" "td" "tetris" "tetris-offline" "tetris-noscaling" "learning")
+#   g) *overhead* -- Measure the overhead of the whole TETRiS approach without applying the resource decisions
+modes=("cfs" "td" "tetris" "tetris-offline" "tetris-noscaling" "learning" "overhead")
 
 
 # Other optional configuration variables
