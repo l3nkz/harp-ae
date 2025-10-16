@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+SCRIPTDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+export TETRIS_CLIENT=$(basename "$0")
+
+${SCRIPTDIR}/lms-static.x -p $TETRIS_PLATFORM -c $TETRIS_MAPPING

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+~/harp-tflite/examples/run2.sh alexnet $1

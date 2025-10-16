@@ -223,7 +223,8 @@ sample configuration file to 'config.sh.inc'. For the Odroid platform choose the
 file and for the Raptor Lake platform the 'config.raptor.sample' file.
 
 Next, copy the benchmark files in the 'bench' directory and the HARP binaries to the 'bin' directory
-and the HARP libraries to the 'lib' directory.
+and the HARP libraries to the 'lib' directory. See the Readmes of the corresponding sub-directories of
+this repository for more information.
 
 
 ### Preparing the Hardware
