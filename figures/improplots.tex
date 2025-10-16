@@ -1,4 +1,5 @@
-\documentclass[9pt]{standalone}
+%\documentclass[9pt]{standalone}
+\documentclass[sigconf,twocolumn,9pt]{acmart}
 
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -7,9 +8,11 @@
 \newcommand{\mean}{\textsc{Harp}}
 
 \usepackage{tikz}
+\usepackage{pgfplotstable}
 \usepackage{pgfplots}
 
-\usetikzlibrary{colorbrewer}
+\usetikzlibrary{colorbrewer, arrows.meta, fit, positioning, calc}
+%\usetikzlibrary{calc, chains, positioning, fit, arrows.meta, decorations.pathreplacing, shapes.geometric, colorbrewer}
 
 \pgfdeclarelayer{bg}
 \pgfdeclarelayer{fg}
@@ -261,6 +264,9 @@
 \begin{document}
 
 % Raptor Lake figure
+
+\begin{figure*}[h!]
+\centering
 \begin{tikzpicture}
 \def\base{data/raptor/single}
 \def\modes{td/diamond/east, tetris/oplus/east, tetris-offline/*/west, tetris-noscaling/o/east}
@@ -425,8 +431,11 @@ pos
     ] {};
 
 \end{tikzpicture}
+\end{figure*}
 
 % Odroid figure
+\begin{figure*}[h!]
+\centering
 \begin{tikzpicture}
 \def\base{data/odroid/single}
 \def\modes{tetris/*/east}
@@ -587,4 +596,6 @@ pos
     inner sep=.5pt,
     ] {};
 \end{tikzpicture}
+\end{figure*}
+
 \end{document}
