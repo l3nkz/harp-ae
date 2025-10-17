@@ -276,7 +276,7 @@ from that. Use the following command:
 ./construct_optables.py -i <result_dir> -p odroid|raptor -o platforms
 ```
 
-This python script requires the 'parotoset','pandas', and 'yaml' python packages. Either install them to
+This python script requires the 'paretoset','pandas', and 'yaml' python packages. Either install them to
 your system or use an appropriate python environment.
 
 ## Run the Measurement
