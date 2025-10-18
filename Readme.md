@@ -22,7 +22,7 @@ In order to perform the evaluation of the HARP paper, various preparations have 
 
 ### System Setup
 
-Both systems the Odroid as well as the Raptor Lake need a special Linux kernel for the baseline measurements.
+Both systems the Odroid as well as the Raptor Lake need a special Linux kernel for the **baseline measurements**.
 Follow the below steps to build and install these kernels. Reboot and verify with `uname -a` that the correct
 kernel is running.
 
@@ -96,7 +96,7 @@ dpkg -i linux-image.*.deb
 
 Clone the repository or use the provided tar file.
 
-`git clone https://github.com/l3nkz/harp.git` or `wget os.inf.tu-dresden.de/~tsmejkal/harp.tar.gz && tar -xaf harp.tar.gz`
+`git clone https://github.com/TUD-OS/harp.git` or `wget os.inf.tu-dresden.de/~tsmejkal/harp.tar.gz && mkdir harp && tar -xaf harp.tar.gz -C harp`
 
 Install all of HARP's dependencies. This depends on your distribution.
 
@@ -113,7 +113,7 @@ Build HARP and libharp with the following commands:
 
 ```
 mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=~/harp ..
+cmake -DCMAKE_INSTALL_PREFIX=~/harprm ..
 make
 make install
 ```
@@ -177,23 +177,23 @@ Download the sources for the KPN framework and the benchmarks and compile them a
 
 First the KPN framework
 ```
-wget https://os.inf.tu-dresden.de/~tsmejkal/dpm.tar.gz && tar -xaf dpm.tar.gz
+wget https://os.inf.tu-dresden.de/~tsmejkal/dpm.tar.gz && mkdir dpm && tar -xaf dpm.tar.gz -C dpm
 cd dpm
 mkdir build && cd build
-cmake -DCMAKE_PREFIX_PATH=~/harp -DCMAKE_INSTALL_PREFIX=~/harp ..
+cmake -DCMAKE_PREFIX_PATH=~/harprm -DCMAKE_INSTALL_PREFIX=~/harprm ..
 make
 make install
 ```
 
 Second the KPN Benchmarks
 ```
-wget https://os.inf.tu-dresden.de/~tsmejkal/dpm-demos.tar.gz && tar -xaf dpm-demo.tar.gz
+wget https://os.inf.tu-dresden.de/~tsmejkal/dpm-demos.tar.gz && mkdir dpm-demo && tar -xaf dpm-demo.tar.gz -C dpm-demo
 cd dpm-demo
 for b in "LMS" "LMS-static-4" "Mandelbrot" "Mandelbrot-static-4"; do
     (
         cd $b
         mkdir build && cd build
-        cmake -DCMAKE_PREFIX_PATH=~/harp ..
+        cmake -DCMAKE_PREFIX_PATH=~/harprm ..
         make
     )
 done
@@ -226,7 +226,7 @@ Now download the HARP-enabled TF-Lite repository and install the TF-Lite library
 virtualenv.
 
 ```
-wget https://os.inf.tu-dresden.de/~tsmejkal/harp-tflite.tar.gz && tar -xaf harp-tflite.tar.gz
+wget https://os.inf.tu-dresden.de/~tsmejkal/harp-tflite.tar.gz && mkdir harp-tflite && tar -xaf harp-tflite.tar.gz -C harp-tflite
 cd harp-tflite
 pip install .
 ```
