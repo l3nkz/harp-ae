@@ -49,7 +49,7 @@ construct_configs
 # Extract the to be measured apps from the scenarios
 declare -a apps
 for s in ${scenarios[@]}; do
-    if [[ $s =~ "|" ]];
+    if [[ $s =~ "|" ]]; then
         continue
     fi
 

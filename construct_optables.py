@@ -71,7 +71,7 @@ def pareto_optimize(df, platform):
         df["ips"] = min_total_ms/df["total_ms"]
 
     static_power = 9800 if platform == "raptor" else 1200
-    df["power_mw"] = df["energy_uj"]/df["time_ms"] - static_power
+    df["power_mw"] = df["energy"]/df["time"] - static_power
 
     if not "utility" in df.columns:
         df["utility"] = df["ips"]
